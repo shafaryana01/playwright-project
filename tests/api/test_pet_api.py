@@ -1,18 +1,22 @@
 import allure
 from playwright.sync_api import APIRequestContext
 
-from api.helpers import PetRequestHelper
+from api.service import PetsApiService
+from fixture.test_services_fixture import ID, NAME
+
 
 
 @allure.title("Adding new animal test")
 @allure.description("This test adds animals to the cart and checks if they have been added")
 def test_add_pet(api_request_context: APIRequestContext):
-    id = 4567
-    name = 'Tom'
-    body = PetRequestHelper.generate_body(id=id, name=name)
-    new_pet = api_request_context.post(url="v2/pet", data=body)
+    pets_api = PetsApiService(api_request_context)
+    id = ID
+    name = NAME
+
+    new_pet = pets_api.add_pet(id=id, name=name)
     assert new_pet.ok, f'Response status code is not ok'
-    response = api_request_context.get(url=f"v2/pet/{id}", )
+
+    response = pets_api.get_pet_by_id(id=id)
     pet = response.json()
 
     actual_result = {'id': pet.get('id'), 'name': pet.get('name')}
