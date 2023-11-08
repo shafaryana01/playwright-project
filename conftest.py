@@ -1,36 +1,54 @@
-import pytest
+from typing import Dict, Generator
+
 import allure
-from playwright.sync_api import Page
+import pytest
+from playwright.sync_api import Browser, BrowserContext
+from playwright.sync_api import Playwright, APIRequestContext
 
-from pages.cart_page import CartPage
-from pages.login_page import LoginPage
-from pages.main_page import MainPage
+from config import USERNAME, PASSWORD
+from pages.login_page.page import LoginPage
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture()
 def browser_context_args(browser_context_args):
     return {
         **browser_context_args,
         'viewport': {
-            'width': 1920,
-            'height': 1080,
+            'width': 800,
+            'height': 600,
         },
     }
 
 
 @pytest.fixture()
-def login_page(page: Page):
-    return LoginPage(page)
+def context(create_browser_context, browser: Browser, browser_context_args: Dict) -> Generator[
+    BrowserContext, None, None]:
+    context = browser.new_context(storage_state="state.json", **browser_context_args)
+    yield context
+    context.close()
 
 
-@pytest.fixture()
-def main_page(page: Page):
-    return MainPage(page)
+@allure.step("Create Session")
+@pytest.fixture(scope='session')
+def create_browser_context(browser) -> None:
+    context = browser.new_context()
+    page = context.new_page()
+    login_page = LoginPage(page)
+    login_page.login(USERNAME, PASSWORD)
+    context.storage_state(path="state.json")
+    yield context, page
+    context.close()
 
+@pytest.fixture(scope="session")
+def api_request_context(
+    playwright: Playwright,
+) -> Generator[APIRequestContext, None, None]:
+    request_context = playwright.request.new_context(
+        base_url="https://petstore.swagger.io/"
+    )
+    yield request_context
+    request_context.dispose()
 
-@pytest.fixture()
-def cart_page(page: Page):
-    return CartPage(page)
 
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)
 def pytest_runtest_makereport(item):
