@@ -6,8 +6,9 @@ from config import MAIN_PAGE_URL
 
 class BasePage:
 
-    def __init__(self, page: Page):
+    def __init__(self, page: Page, locators=None):
         self.page = page
+        self.locators = locators
 
     @allure.step("Opening url")
     def load(self):
