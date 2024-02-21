@@ -10,18 +10,21 @@ class LoginPage(BasePage):
 
     def __init__(self, page: Page):
         super().__init__(page)
+        self.USERNAME_INPUT = page.locator(LoginPageLocators.USERNAME_INPUT)
+        self.PASSWORD_INPUT = page.locator(LoginPageLocators.PASSWORD_INPUT)
+        self.LOGIN_BUTTON = page.locator(LoginPageLocators.LOGIN_BUTTON)
 
     @allure.step("Entering username")
     def enter_username(self, username: str):
-        self.fill(LoginPageLocators.USERNAME_INPUT, username)
+        self.USERNAME_INPUT.fill(username)
 
     @allure.step("Entering password")
     def enter_password(self, password: str):
-        self.fill(LoginPageLocators.PASSWORD_INPUT, password)
+        self.PASSWORD_INPUT.fill(password)
 
     @allure.step("Clicking login button")
     def click_login_button(self):
-        self.click(LoginPageLocators.LOGIN_BUTTON)
+        self.LOGIN_BUTTON.click()
 
     @allure.step("Login to the system")
     def login(self, username, password):

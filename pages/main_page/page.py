@@ -7,12 +7,12 @@ from pages.main_page.locators import MainPageLocators
 
 
 class MainPage(BasePage):
-    def __init__(self, page: Page, locators=MainPageLocators):
-        super().__init__(page, locators)
-        self.PRODUCT_TITLE = page.locator(locators.PRODUCT_TITLE)
-        self.ADD_BACKPACK_TO_CARD_BUTTON = page.locator(locators.ADD_BACKPACK_TO_CARD_BUTTON)
-        self.ITEM_NAME = page.locator(locators.ITEM_NAME)
-        self.SHOPPING_CART_BUTTON = page.locator(locators.SHOPPING_CART_BUTTON)
+    def __init__(self, page: Page):
+        super().__init__(page)
+        self.PRODUCT_TITLE = page.locator(MainPageLocators.PRODUCT_TITLE)
+        self.ADD_BACKPACK_TO_CARD_BUTTON = page.locator(MainPageLocators.ADD_BACKPACK_TO_CARD_BUTTON)
+        self.ITEM_NAME = page.locator(MainPageLocators.ITEM_NAME)
+        self.SHOPPING_CART_BUTTON = page.locator(MainPageLocators.SHOPPING_CART_BUTTON)
 
     @allure.step("Adding backpack to cart")
     def add_backpack_to_cart(self):
